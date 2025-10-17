@@ -27,7 +27,7 @@ The project is configured to emit the production build into the `docs/` director
    `npm install`
 2. ビルドを実行:
    `npm run build`
-3. Commit the generated `docs/` directory to your repository.
+3. Commit the generated `docs/` directory to your repository. Make sure the `.nojekyll` marker file in `docs/` is present so GitHub Pages serves the bundled assets without running Jekyll.
 4. In your repository settings, enable GitHub Pages for the `main` branch and choose the `docs/` folder as the source.
 
 All asset URLs are relative, so the app will load correctly regardless of the repository name used for the Pages site.
