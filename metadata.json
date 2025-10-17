@@ -1,0 +1,6 @@
+{
+  "name": "Copy of 体脂肪トレンド可視化ツール",
+  "description": "体組成データ（Excel/CSV）をアップロードし、高度なデータ平滑化技術を用いて体脂肪量の時間的推移を可視化するアプリケーションです。",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
