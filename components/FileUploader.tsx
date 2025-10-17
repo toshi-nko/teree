@@ -98,7 +98,7 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, fileName, isL
             <span className="font-semibold text-blue-600 cursor-pointer hover:underline">クリックしてアップロード</span>
             <span className="text-slate-500"> またはドラッグ＆ドロップ</span>
         </label>
-        <p className="text-xs text-slate-400 mt-2">Excel (.xlsx, .xls) または CSV ファイル</p>
+        <p className="text-xs text-slate-400 mt-2">Excel (.xlsx, .xls) または CSV ファイル <span className="block sm:inline">※Excel解析にはオンラインでXLSXライブラリの読み込みが必要です</span></p>
 
         {fileName && (
             <div className="mt-4 flex items-center bg-slate-100 px-4 py-2 rounded-lg text-sm">

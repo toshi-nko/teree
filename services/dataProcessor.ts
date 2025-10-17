@@ -10,8 +10,12 @@ import {
   EMA_SPAN_LONG,
 } from '../constants';
 
-// Make TypeScript aware of the globally available XLSX object from the CDN script
-declare const XLSX: any;
+const getXLSX = () => {
+    if (typeof window !== 'undefined' && (window as unknown as { XLSX?: unknown }).XLSX) {
+        return (window as unknown as { XLSX: any }).XLSX;
+    }
+    throw new Error('Excelファイルを処理するためのXLSXライブラリが読み込まれていません。ネットワーク接続を確認するか、CSV形式でアップロードしてください。');
+};
 
 // --- FILE PARSING ---
 
@@ -42,6 +46,7 @@ const parseCSV = (text: string): RawDataPoint[] => {
 };
 
 const parseExcel = (buffer: ArrayBuffer): RawDataPoint[] => {
+    const XLSX = getXLSX();
     const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
@@ -88,7 +93,8 @@ export const parseFile = (file: File): Promise<RawDataPoint[]> => {
         const reader = new FileReader();
         reader.onload = (event) => {
             try {
-                if (file.name.endsWith('.csv')) {
+                const lowerName = file.name.toLowerCase();
+                if (lowerName.endsWith('.csv')) {
                     resolve(parseCSV(event.target?.result as string));
                 } else {
                     resolve(parseExcel(event.target?.result as ArrayBuffer));
@@ -99,7 +105,8 @@ export const parseFile = (file: File): Promise<RawDataPoint[]> => {
         };
         reader.onerror = (error) => reject(error);
 
-        if (file.name.endsWith('.csv')) {
+        const lowerName = file.name.toLowerCase();
+        if (lowerName.endsWith('.csv')) {
             reader.readAsText(file, 'UTF-8');
         } else {
             reader.readAsArrayBuffer(file);

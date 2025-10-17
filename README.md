@@ -18,3 +18,16 @@ View your app in AI Studio: https://ai.studio/apps/drive/1hoHWVeXd5PZzEcJU454Wiz
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+## Deploy to GitHub Pages
+
+The project is configured to emit the production build into the `docs/` directory so that it can be served directly by GitHub Pages.
+
+1. (初回のみ) 依存関係をインストール:
+   `npm install`
+2. ビルドを実行:
+   `npm run build`
+3. Commit the generated `docs/` directory to your repository.
+4. In your repository settings, enable GitHub Pages for the `main` branch and choose the `docs/` folder as the source.
+
+All asset URLs are relative, so the app will load correctly regardless of the repository name used for the Pages site.
