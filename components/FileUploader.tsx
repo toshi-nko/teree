@@ -44,27 +44,27 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, fileName, isL
     }
   };
 
-  const borderStyle = isDragOver ? 'border-blue-500 bg-blue-50' : 'border-slate-300';
-  const disabledClass = isLoading ? 'opacity-50 cursor-not-allowed' : '';
+  const cardClass = `uploader-card${isLoading ? ' is-disabled' : ''}`;
+  const dropzoneClass = [
+    'uploader-dropzone',
+    isDragOver ? 'is-active' : '',
+    isLoading ? 'is-disabled' : '',
+  ].filter(Boolean).join(' ');
 
-  // After a file is successfully loaded, show a compact version.
   if (fileName && !isLoading) {
     return (
-      <div className="max-w-4xl mx-auto bg-white rounded-lg shadow-md transition-all duration-300">
-        <div className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center bg-slate-100 px-4 py-2 rounded-lg text-sm w-full sm:w-auto overflow-hidden">
-            <FileText className="w-5 h-5 text-slate-500 mr-2 flex-shrink-0" />
-            <span className="font-medium text-slate-700 truncate" title={fileName}>{fileName}</span>
+      <div className={`${cardClass} uploader-card--compact`}>
+        <div className="uploader-summary">
+          <div className="uploader-file-chip" title={fileName}>
+            <FileText className="uploader-file-icon" />
+            <span className="uploader-file-name">{fileName}</span>
           </div>
-          <label
-            htmlFor="file-input-replace"
-            className="w-full sm:w-auto flex-shrink-0 text-center px-4 py-2 text-sm font-semibold text-blue-600 bg-white border border-blue-600 rounded-lg cursor-pointer hover:bg-blue-50 transition-colors"
-          >
+          <label htmlFor="file-input-replace" className="uploader-action-button">
             ファイルを変更
             <input
               type="file"
               id="file-input-replace"
-              className="hidden"
+              className="uploader-input"
               accept=".xlsx, .xls, .csv"
               onChange={handleFileChange}
               disabled={isLoading}
@@ -75,35 +75,34 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, fileName, isL
     );
   }
 
-  // Default view for uploading or when loading
   return (
-    <div className={`max-w-4xl mx-auto bg-white rounded-lg p-6 shadow-md ${disabledClass} transition-all duration-300`}>
+    <div className={cardClass}>
       <div
         onDragEnter={handleDragEnter}
         onDragLeave={handleDragLeave}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        className={`relative flex flex-col items-center justify-center w-full p-8 border-2 border-dashed ${borderStyle} rounded-xl transition-colors duration-300`}
+        className={dropzoneClass}
       >
-        <UploadCloud className="w-12 h-12 text-slate-400 mb-4" />
+        <UploadCloud className="uploader-icon" />
         <input
           type="file"
           id="file-input"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="uploader-input"
           accept=".xlsx, .xls, .csv"
           onChange={handleFileChange}
           disabled={isLoading}
         />
-        <label htmlFor="file-input" className="text-center">
-            <span className="font-semibold text-blue-600 cursor-pointer hover:underline">クリックしてアップロード</span>
-            <span className="text-slate-500"> またはドラッグ＆ドロップ</span>
+        <label htmlFor="file-input" className="uploader-label">
+            <span className="uploader-label__primary">クリックしてアップロード</span>
+            <span className="uploader-label__secondary">またはドラッグ＆ドロップ</span>
         </label>
-        <p className="text-xs text-slate-400 mt-2">Excel (.xlsx, .xls) または CSV ファイル <span className="block sm:inline">※Excel解析にはオンラインでXLSXライブラリの読み込みが必要です</span></p>
+        <p className="uploader-hint">Excel (.xlsx, .xls) または CSV ファイル <span className="uploader-hint__note">※Excel解析にはオンラインでXLSXライブラリの読み込みが必要です</span></p>
 
         {fileName && (
-            <div className="mt-4 flex items-center bg-slate-100 px-4 py-2 rounded-lg text-sm">
-                <FileText className="w-5 h-5 text-slate-500 mr-2" />
-                <span className="font-medium text-slate-700 truncate">{fileName}</span>
+            <div className="uploader-file-preview">
+                <FileText className="uploader-file-icon" />
+                <span className="uploader-file-name">{fileName}</span>
             </div>
         )}
       </div>

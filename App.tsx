@@ -58,48 +58,48 @@ const App: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen bg-slate-100 font-sans p-4 sm:p-6 lg:p-8">
-      <div className="max-w-7xl mx-auto">
-        <header className="text-center mb-8">
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-800">体脂肪トレンド可視化ツール</h1>
-          <p className="text-slate-500 mt-2 text-md">体組成データをアップロードして、あなたの進捗を確認しましょう。</p>
+    <div className="app-shell">
+      <div className="app-container">
+        <header className="app-header">
+          <h1 className="app-title">体脂肪トレンド可視化ツール</h1>
+          <p className="app-subtitle">体組成データをアップロードして、あなたの進捗を確認しましょう。</p>
         </header>
 
-        <main className="space-y-6">
+        <main className="app-main">
           <FileUploader onFileSelect={handleFileSelect} fileName={fileName} isLoading={isLoading} />
-          
+
           {error && (
-             <div className="max-w-4xl mx-auto bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded-md shadow-md" role="alert">
-                <p className="font-bold">エラーが発生しました</p>
-                <p>{error}</p>
+             <div className="error-alert" role="alert">
+                <p className="error-alert__title">エラーが発生しました</p>
+                <p className="error-alert__message">{error}</p>
             </div>
           )}
 
           {isLoading && (
-            <div className="flex justify-center items-center p-8">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-              <p className="ml-4 text-slate-600 font-medium">データを処理中...</p>
+            <div className="loading-state">
+              <div className="loading-spinner" aria-hidden="true"></div>
+              <p className="loading-message">データを処理中...</p>
             </div>
           )}
 
           {allChartData.length > 0 && !isLoading && !error && (
-            <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6">
+            <div className="app-card">
                {fullDateRange && dateRange && (
-                <RangeControls 
+                <RangeControls
                   dateRange={dateRange}
                   setDateRange={setDateRange}
                   fullDateRange={fullDateRange}
                 />
               )}
-              <div style={{ height: '55vh', minHeight: '400px' }}>
+              <div className="chart-region">
                 <ChartDisplay data={visibleData} />
               </div>
             </div>
           )}
         </main>
 
-        <footer className="text-center mt-12 text-sm text-slate-400">
-          <p>Powered by React, Recharts, and Tailwind CSS</p>
+        <footer className="app-footer">
+          <p>Powered by React, Recharts, and modern web tooling</p>
         </footer>
       </div>
     </div>

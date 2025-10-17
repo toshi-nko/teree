@@ -27,17 +27,14 @@ const RangeControls: React.FC<RangeControlsProps> = ({ dateRange, setDateRange, 
   }
 
   const QuickButton: React.FC<{onClick: () => void; children: React.ReactNode;}> = ({ onClick, children }) => (
-    <button
-      onClick={onClick}
-      className="flex-grow px-3 py-1.5 text-sm font-medium text-slate-600 bg-slate-100 rounded-md hover:bg-slate-200 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-    >
+    <button onClick={onClick} className="range-quick-button">
       {children}
     </button>
   );
 
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-center justify-center p-2 rounded-lg">
-      <div className="flex gap-2 items-center w-full sm:w-auto">
+    <div className="range-controls">
+      <div className="range-inputs">
         <input
           type="date"
           name="start"
@@ -45,10 +42,10 @@ const RangeControls: React.FC<RangeControlsProps> = ({ dateRange, setDateRange, 
           min={fullDateRange.start}
           max={fullDateRange.end}
           onChange={handleDateChange}
-          className="w-full text-sm p-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800"
+          className="range-date-input"
           aria-label="開始日"
         />
-        <span className="text-slate-400">-</span>
+        <span className="range-separator">-</span>
         <input
           type="date"
           name="end"
@@ -56,11 +53,11 @@ const RangeControls: React.FC<RangeControlsProps> = ({ dateRange, setDateRange, 
           min={fullDateRange.start}
           max={fullDateRange.end}
           onChange={handleDateChange}
-          className="w-full text-sm p-2 border border-slate-300 rounded-md focus:ring-blue-500 focus:border-blue-500 bg-white text-slate-800"
+          className="range-date-input"
           aria-label="終了日"
         />
       </div>
-      <div className="flex gap-2 w-full sm:w-auto">
+      <div className="range-quick-buttons">
           <QuickButton onClick={() => setQuickRange(30)}>1ヶ月</QuickButton>
           <QuickButton onClick={() => setQuickRange(90)}>3ヶ月</QuickButton>
           <QuickButton onClick={() => setQuickRange(365)}>1年</QuickButton>

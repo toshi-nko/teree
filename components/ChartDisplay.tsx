@@ -152,22 +152,22 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
           ];
 
           return (
-            <div className="bg-white/80 backdrop-blur-sm p-3 shadow-lg rounded-lg border border-slate-200">
-              <p className="font-bold text-slate-800">{DateTime.fromISO(data.date).toFormat('yyyy年MM月dd日')}</p>
-              <div className="mt-2 space-y-1 text-sm">
+            <div className="tooltip-card">
+              <p className="tooltip-title">{DateTime.fromISO(data.date).toFormat('yyyy年MM月dd日')}</p>
+              <div className="tooltip-list">
                 {tooltipItems.map(item => {
                     if (item.value === undefined || !absoluteVisibility[item.key]) return null;
                     const unit = ' kg';
                     return (
-                        <p key={item.key} style={{ color: lineColors[item.key].hex }} className="font-medium">
+                        <p key={item.key} style={{ color: lineColors[item.key].hex }} className="tooltip-value">
                             {item.label}: {item.value.toFixed(2)}{unit}
                         </p>
                     );
                 })}
-                <p className="text-slate-500 pt-1 border-t border-slate-200 mt-2">
-                    体脂肪率 (推定): {data.interpolatedFatPercent.toFixed(1)} %
-                </p>
               </div>
+              <p className="tooltip-note">
+                体脂肪率 (推定): {data.interpolatedFatPercent.toFixed(1)} %
+              </p>
             </div>
           );
         }
@@ -178,16 +178,16 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
         if (active && payload && payload.length) {
             const point = payload[0].payload;
             return (
-                <div className="bg-white/80 backdrop-blur-sm p-3 shadow-lg rounded-lg border border-slate-200">
-                    <p className="font-bold text-slate-800">{DateTime.fromISO(point.date).toFormat('yyyy年MM月dd日')}</p>
-                    <div className="mt-2 space-y-1 text-sm">
+                <div className="tooltip-card">
+                    <p className="tooltip-title">{DateTime.fromISO(point.date).toFormat('yyyy年MM月dd日')}</p>
+                    <div className="tooltip-list">
                         {dailyChangeVisibility.fatChange && typeof point.fatChange === 'number' && (
-                            <p style={{ color: lineColors.trend.hex }} className="font-medium">
+                            <p style={{ color: lineColors.trend.hex }} className="tooltip-value">
                                 脂肪量傾向(前日比): {point.fatChange.toFixed(3)} kg
                             </p>
                         )}
                         {dailyChangeVisibility.leanChange && typeof point.leanChange === 'number' && (
-                            <p style={{ color: lineColors.trendLeanMass.hex }} className="font-medium">
+                            <p style={{ color: lineColors.trendLeanMass.hex }} className="tooltip-value">
                                 除脂肪量傾向(前日比): {point.leanChange.toFixed(3)} kg
                             </p>
                         )}
@@ -202,16 +202,16 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
         if (active && payload && payload.length) {
             const point = payload[0].payload;
             return (
-                <div className="bg-white/80 backdrop-blur-sm p-3 shadow-lg rounded-lg border border-slate-200">
-                    <p className="font-bold text-slate-800">{DateTime.fromISO(point.date).toFormat('yyyy年MM月dd日')}</p>
-                    <div className="mt-2 space-y-1 text-sm">
+                <div className="tooltip-card">
+                    <p className="tooltip-title">{DateTime.fromISO(point.date).toFormat('yyyy年MM月dd日')}</p>
+                    <div className="tooltip-list">
                         {differenceVisibility.fatDifference && typeof point.fatDifference === 'number' && (
-                            <p style={{ color: lineColors.observed.hex }} className="font-medium">
+                            <p style={{ color: lineColors.observed.hex }} className="tooltip-value">
                                 脂肪量(実測 - 傾向): {point.fatDifference.toFixed(3)} kg
                             </p>
                         )}
                         {differenceVisibility.leanDifference && typeof point.leanDifference === 'number' && (
-                            <p style={{ color: lineColors.leanMass.hex }} className="font-medium">
+                            <p style={{ color: lineColors.leanMass.hex }} className="tooltip-value">
                                 除脂肪量(実測 - 傾向): {point.leanDifference.toFixed(3)} kg
                             </p>
                         )}
@@ -250,8 +250,21 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
                 const isVisible = absoluteVisibility[dataKey];
                 const colors = lineColors[dataKey];
                 return (
-                    <button key={`legend-btn-${dataKey}`} onClick={() => toggleAbsoluteVisibility(dataKey)} aria-pressed={isVisible} className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 border-2 ${ isVisible ? `${colors.bg} text-white ${colors.border}` : `bg-white text-slate-600 ${colors.border} hover:bg-slate-50`}`}>
-                        <div className={`w-2.5 h-2.5 rounded-full ${isVisible ? 'bg-white' : colors.bg}`}></div>
+                    <button
+                        key={`legend-btn-${dataKey}`}
+                        onClick={() => toggleAbsoluteVisibility(dataKey)}
+                        aria-pressed={isVisible}
+                        className={`legend-button${isVisible ? ' is-active' : ''}`}
+                        style={{
+                            borderColor: colors.hex,
+                            backgroundColor: isVisible ? colors.hex : undefined,
+                            color: isVisible ? '#ffffff' : undefined,
+                        }}
+                    >
+                        <div
+                            className="legend-dot"
+                            style={{ backgroundColor: isVisible ? '#ffffff' : colors.hex }}
+                        ></div>
                         <span>{value}</span>
                     </button>
                 );
@@ -263,8 +276,21 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
                 const isVisible = dailyChangeVisibility[dataKey];
                 const colors = lineColors[colorKey];
                 return (
-                    <button key={`legend-btn-${dataKey}`} onClick={() => toggleDailyChangeVisibility(dataKey)} aria-pressed={isVisible} className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 border-2 ${ isVisible ? `${colors.bg} text-white ${colors.border}` : `bg-white text-slate-600 ${colors.border} hover:bg-slate-50`}`}>
-                        <div className={`w-2.5 h-2.5 rounded-full ${isVisible ? 'bg-white' : colors.bg}`}></div>
+                    <button
+                        key={`legend-btn-${dataKey}`}
+                        onClick={() => toggleDailyChangeVisibility(dataKey)}
+                        aria-pressed={isVisible}
+                        className={`legend-button${isVisible ? ' is-active' : ''}`}
+                        style={{
+                            borderColor: colors.hex,
+                            backgroundColor: isVisible ? colors.hex : undefined,
+                            color: isVisible ? '#ffffff' : undefined,
+                        }}
+                    >
+                        <div
+                            className="legend-dot"
+                            style={{ backgroundColor: isVisible ? '#ffffff' : colors.hex }}
+                        ></div>
                         <span>{value}</span>
                     </button>
                 );
@@ -276,8 +302,21 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
                 const isVisible = differenceVisibility[dataKey];
                 const colors = lineColors[colorKey];
                 return (
-                    <button key={`legend-btn-${dataKey}`} onClick={() => toggleDifferenceVisibility(dataKey)} aria-pressed={isVisible} className={`flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full transition-all duration-200 border-2 ${ isVisible ? `${colors.bg} text-white ${colors.border}` : `bg-white text-slate-600 ${colors.border} hover:bg-slate-50`}`}>
-                        <div className={`w-2.5 h-2.5 rounded-full ${isVisible ? 'bg-white' : colors.bg}`}></div>
+                    <button
+                        key={`legend-btn-${dataKey}`}
+                        onClick={() => toggleDifferenceVisibility(dataKey)}
+                        aria-pressed={isVisible}
+                        className={`legend-button${isVisible ? ' is-active' : ''}`}
+                        style={{
+                            borderColor: colors.hex,
+                            backgroundColor: isVisible ? colors.hex : undefined,
+                            color: isVisible ? '#ffffff' : undefined,
+                        }}
+                    >
+                        <div
+                            className="legend-dot"
+                            style={{ backgroundColor: isVisible ? '#ffffff' : colors.hex }}
+                        ></div>
                         <span>{value}</span>
                     </button>
                 );
@@ -287,45 +326,36 @@ const ChartDisplay: React.FC<{ data: ChartDataPoint[] }> = ({ data }) => {
     }
 
     return (
-        <div className="w-full h-full flex flex-col">
-            <div className="flex justify-center mb-4">
-                <div className="inline-flex rounded-md shadow-sm" role="group">
+        <div className="chart-wrapper">
+            <div className="chart-mode-switch">
+                <div className="chart-mode-buttons" role="group">
                     <button
                         onClick={() => setChartType('absolute')}
-                        className={`px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                            chartType === 'absolute'
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-300'
-                        } border rounded-l-lg focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1`}
+                        className={`chart-mode-button${chartType === 'absolute' ? ' is-active' : ''}`}
+                        aria-pressed={chartType === 'absolute'}
                     >
                         絶対値
                     </button>
                     <button
                         onClick={() => setChartType('dailyChange')}
-                        className={`-ml-px px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                            chartType === 'dailyChange'
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-300'
-                        } border focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1`}
+                        className={`chart-mode-button${chartType === 'dailyChange' ? ' is-active' : ''}`}
+                        aria-pressed={chartType === 'dailyChange'}
                     >
                         前日比
                     </button>
                     <button
                         onClick={() => setChartType('difference')}
-                        className={`-ml-px px-4 py-2 text-sm font-medium transition-colors duration-200 ${
-                            chartType === 'difference'
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white text-slate-700 hover:bg-slate-50 border-slate-300'
-                        } border rounded-r-lg focus:z-10 focus:ring-2 focus:ring-blue-500 focus:ring-offset-1`}
+                        className={`chart-mode-button${chartType === 'difference' ? ' is-active' : ''}`}
+                        aria-pressed={chartType === 'difference'}
                     >
                         差分
                     </button>
                 </div>
             </div>
-            <div className="flex justify-center items-center flex-wrap gap-3 mb-2" role="group" aria-label="グラフの表示切り替え">
+            <div className="legend-group" role="group" aria-label="グラフの表示切り替え">
                {renderLegend()}
             </div>
-            <div className="flex-grow" ref={chartWrapperRef} onTouchEnd={handleTouchEnd}>
+            <div className="chart-surface" ref={chartWrapperRef} onTouchEnd={handleTouchEnd}>
                 <ResponsiveContainer width="100%" height="100%">
                     {chartType === 'absolute' ? (
                         <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
